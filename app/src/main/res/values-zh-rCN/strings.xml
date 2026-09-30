@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Rattlegram Plus</string>
+	<string name="decoder_settings">解码器设置</string>
+	<string name="encoder_settings">编码器设置</string>
+	<string name="delete">删除</string>
+	<string name="delete_messages">删除消息</string>
+	<string name="danger_zone">危险区域</string>
+	<string name="sample_rate">采样率</string>
+	<string name="rate_8000">8 kHz</string>
+	<string name="rate_16000">16 kHz</string>
+	<string name="rate_32000">32 kHz</string>
+	<string name="rate_44100">44.1 kHz</string>
+	<string name="rate_48000">48 kHz</string>
+	<string name="channel_select">通道选择</string>
+	<string name="channel_default">默认</string>
+	<string name="channel_first">第一</string>
+	<string name="channel_second">第二</string>
+	<string name="channel_summation">求和</string>
+	<string name="channel_analytic">解析</string>
+	<string name="audio_source">音频源</string>
+	<string name="source_default">默认</string>
+	<string name="source_microphone">麦克风</string>
+	<string name="source_camcorder">摄像机</string>
+	<string name="source_voice_recognition">语音识别</string>
+	<string name="source_unprocessed">未处理</string>
+	<string name="leading_noise">前导噪声</string>
+	<string name="quarter_second">四分之一秒</string>
+	<string name="half_second">半秒</string>
+	<string name="one_second">一秒</string>
+	<string name="two_seconds">两秒</string>
+	<string name="four_seconds">四秒</string>
+	<string name="eight_seconds">八秒</string>
+	<string name="quarter_minute">四分之一分钟</string>
+	<string name="half_minute">半分钟</string>
+	<string name="one_minute">一分钟</string>
+	<string name="two_minutes">两分钟</string>
+	<string name="fancy_header">花式报头</string>
+	<string name="repeater_mode">转发模式</string>
+	<string name="delay">延迟</string>
+	<string name="no_delay">无延迟</string>
+	<string name="debounce">去抖</string>
+	<string name="allow_bouncing">允许弹跳</string>
+	<string name="night_mode">夜间模式</string>
+	<string name="enable">启用</string>
+	<string name="disable">禁用</string>
+	<string name="force_quit">强制退出</string>
+	<string name="enable_ultrasonic">启用超声波</string>
+	<string name="quit">退出</string>
+	<string name="close">关闭</string>
+	<string name="okay">确定</string>
+	<string name="cancel">取消</string>
+	<string name="draft">草稿</string>
+	<string name="discard">丢弃</string>
+	<string name="transmit">发送</string>
+	<string name="ping">Ping</string>
+	<string name="compose">编写</string>
+	<string name="compose_message">编写消息</string>
+	<string name="call_sign">呼号</string>
+	<string name="call_hint">在此输入您的呼号</string>
+	<string name="message_hint">在此输入您的消息</string>
+	<string name="carrier_frequency">载波频率</string>
+	<string name="audio_init_failed">音频初始化失败。请尝试其他设置。强制退出并重启也可能有帮助。</string>
+	<string name="audio_setup_failed">音频设置失败。请尝试其他设置。</string>
+	<string name="audio_permission_denied">麦克风访问被拒绝。请检查权限。</string>
+	<string name="audio_recording_error">录音失败。请检查访问是否被阻止。如有必要，请重启设备以恢复访问。</string>
+	<string name="listening">正在监听</string>
+	<string name="transmitting">正在发送</string>
+	<string name="ignoring">正在忽略</string>
+	<string name="spectrum_analyzer">频谱分析仪</string>
+	<string name="spectrum_description">音频信号频谱</string>
+	<string name="spectrogram_description">音频信号频谱图</string>
+	<string name="title_line">%1$s - %2$s - %3$s</string>
+	<string name="title_message">%1$s - %2$s - %3$s:\n%4$s</string>
+	<string name="from_status">来自 %1$s - 模式 %2$d - CFO %3$.2f Hz</string>
+	<plurals name="strong_bytes_left">
+		<item quantity="one">强力模式(19)剩余 %d 字节</item>
+		<item quantity="other">强力模式(19)剩余 %d 字节</item>
+	</plurals>
+	<plurals name="medium_bytes_left">
+		<item quantity="one">普通模式(18)剩余 %d 字节</item>
+		<item quantity="other">普通模式(18)剩余 %d 字节</item>
+	</plurals>
+	<plurals name="normal_bytes_left">
+		<item quantity="one">快速模式(17)剩余 %d 字节</item>
+		<item quantity="other">快速模式(17)剩余 %d 字节</item>
+	</plurals>
+	<plurals name="over_capacity">
+		<item quantity="one">超出容量 %d 字节</item>
+		<item quantity="other">超出容量 %d 字节</item>
+	</plurals>
+	<plurals name="bits_flipped">
+		<item quantity="one">已纠正 %d 个比特翻转</item>
+		<item quantity="other">已纠正 %d 个比特翻转</item>
+	</plurals>
+	<string name="received">已接收</string>
+	<string name="transmitted">已发送</string>
+	<string name="repeated">已重复</string>
+	<string name="preamble_fail">前导码失败</string>
+	<string name="preamble_nope">模式 %1$d 不受支持</string>
+	<string name="preamble_ping">收到 Ping</string>
+	<string name="sent_ping">已发送 Ping</string>
+	<string name="heap_error">内存不足</string>
+	<string name="decoding_failed">解码失败</string>
+	<string name="payload_unknown">负载未知</string>
+	<string name="force_quit_prompt">您确定要强制退出应用吗？</string>
+	<string name="delete_messages_prompt">您确定要永久删除所有消息吗？</string>
+	<string name="enable_ultrasonic_prompt">您确定要启用超声波频率传输吗？
+\n\n警告：\n较高的采样率（44.1 和 48 kHz）可启用高于 16 kHz 的载波频率以进行超声波传输。长时间暴露于高音调声音可能会损害您的听力，即使您听不到它们。
+	</string>
+	<string name="privacy_policy">隐私政策</string>
+	<string name="privacy_policy_text">为了解码 COFDMTV 编码的文本消息，Rattlegram Plus需要访问麦克风。
+访问麦克风被视为敏感权限，您有权知道 Rattlegram Plus如何使用该访问权限：
+从麦克风录制的数据仅用于馈送 COFDMTV 解码器和频谱分析仪，以可视化其频率内容。
+Rattlegram Plus 使用易失性内存中的非常小的临时缓冲区，并不断用来自麦克风的新数据覆盖该缓冲区。
+COFDMTV 解码器生成的文本消息是唯一存储在设备持久存储中的数据。</string>
+	<string name="about">关于 Rattlegram Plus</string>
+	<string name="about_text">Rattlegram %1$s\nCopyright 2022 aicodix GmbH
+\n\nRattlegram Plus %1$s\nCopyright 2026 BI3BJU
+\n\n开源：https://github.com/BI3BJU
+\n\nQQ：2875106324
+\n\nQQ群：1073967333
+\n\n频率：50.800，146.800，432.800MHz。
+\n\n请阅读本页底部的免责声明。
+\n\nRattlegram pLUS将短文本消息作为 COFDMTV 编码音频传输，并基于开源软件：
+\n\nOFDM 调制解调器实现和规范：\nhttps://github.com/aicodix/modem\nBSD Zero Clause License
+\n\nPolar 列表和有序统计解码：\nhttps://github.com/aicodix/code\nBSD Zero Clause License
+\n\n数字信号处理：\nhttps://github.com/aicodix/dsp\nBSD Zero Clause License
+\n\n花式报头字体：\nhttp://terminus-font.sourceforge.net\nSIL Open Font License
+\n\n免责声明：\n本软件按“原样”提供，作者不对本软件作出任何保证，包括对适销性和特定用途适用性的所有默示保证。在任何情况下，作者均不对任何特殊、直接、间接或后果性损害或任何因使用、数据或利润损失而导致的损害承担责任，无论是基于合同、过失或其他侵权行为，还是因使用或执行本软件而产生或与之相关。</string>
+	<string name="base37_characters">（空格，0–9，A-Z）</string>
+
+	<!-- 密码 -->
+	<string name="password">密码</string>
+	<string name="password_dialog_title">修改密码</string>
+	<string name="generate_random_password">生成随机密码</string>
+	<string name="password_empty_error">密码不能为空</string>
+	<string name="password_length_error">密码 UTF-8 字节长度必须在 8 到 256 之间</string>
+	<string name="password_updated">密码已更新</string>
+	<string name="password_length_hint">密码须为 UTF-8 编码，长度 8-256 字节</string>
+
+	<!-- 加密 -->
+	<string name="encrypt_message">加密消息</string>
+	<string name="encryption_disabled_no_password">请先设置密码才能加密</string>
+	<string name="encryption_failed">加密失败</string>
+	<string name="encrypted_message_too_long">加密后消息过长，请缩短内容</string>
+	<string name="transmitted_encrypted">已加密发送</string>
+	<string name="received_decrypted">已解密接收</string>
+
+	<plurals name="bytes_left">
+		<item quantity="one">剩余 %d 字节</item>
+		<item quantity="other">剩余 %d 字节</item>
+	</plurals>
+	<plurals name="over_capacity_neg">
+		<item quantity="one">超出 %d 字节</item>
+		<item quantity="other">超出 %d 字节</item>
+	</plurals>
+
+	<!-- ========== 定位 ========== -->
+	<string name="location_button">发送位置</string>
+	<string name="location_prefix">📍[geo:</string>
+	<string name="location_format">📍[geo:%.6f,%.6f]</string>
+	<string name="open_map">打开地图</string>
+	<string name="location_acquired">已获取定位</string>
+	<string name="location_failed">获取定位失败，请检查 GPS 或网络</string>
+	<string name="location_permission_denied">定位权限被拒绝</string>
+	<string name="location_service_disabled">请打开定位服务</string>
+	<string name="location_fetching">正在获取定位…</string>
+	<string name="location_parse_failed">无法解析定位</string>
+	<string name="location_format_error">定位格式错误</string>
+	<string name="location_default_label">位置</string>
+	<string name="no_map_or_browser">未找到可用的地图或浏览器应用</string>
+
+	<!-- ========== 信标 ========== -->
+	<string name="beacon_started">信标已启动，每60秒发射一次</string>
+	<string name="beacon_stopped">信标已停止</string>
+
+	<!-- ========== 联系人 ========== -->
+	<string name="contacts">联系人</string>
+	<string name="contact_note">备注</string>
+	<string name="contact_hint">长按空白处新增，长按条目修改或删除</string>
+	<string name="contact_edit">修改</string>
+	<string name="contact_call_sign_empty">呼号不能为空</string>
+	<string name="contact_limit_reached">联系人已达上限（100）</string>
+	<string name="contact_delete_prompt">确定删除此联系人？</string>
+	<string name="contact_auto_added_at">自动添加于</string>
+</resources>
