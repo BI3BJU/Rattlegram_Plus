@@ -62,4 +62,5 @@ dependencies {
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
     implementation 'androidx.activity:activity:1.9.0' // Required for EdgeToEdge
+    implementation 'com.journeyapps:zxing-android-embedded:4.3.0' // Password QR code: show and scan (Apache-2.0, includes ZXing core)
 }

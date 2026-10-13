@@ -8,6 +8,7 @@ package com.bi3bju.rattlegram_plus;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
@@ -23,6 +24,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -53,6 +56,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -72,7 +76,15 @@ import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.journeyapps.barcodescanner.BarcodeEncoder;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanOptions;
+
 import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
@@ -2085,6 +2097,47 @@ public class MainActivity extends AppCompatActivity {
     // ========== Password management ==================================
     // ================================================================
 
+    // Password field of the open Change Password dialog, filled in by the QR scanner
+    private EditText passwordScanTarget;
+
+    private final ActivityResultLauncher<ScanOptions> passwordScanner = registerForActivityResult(new ScanContract(), result -> {
+        String contents = result.getContents();
+        if (contents == null || passwordScanTarget == null)
+            return;
+        passwordScanTarget.setText(contents);
+        passwordScanTarget.setSelection(contents.length());
+        Toast.makeText(this, R.string.password_scanned, Toast.LENGTH_LONG).show();
+    });
+
+    /** Shows the password as a QR code so another phone can scan it instead of typing it. */
+    private void showPasswordQr(String text) {
+        Bitmap qr;
+        try {
+            Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
+            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            hints.put(EncodeHintType.MARGIN, 2);
+            qr = new BarcodeEncoder().encodeBitmap(text, BarcodeFormat.QR_CODE, 720, 720, hints);
+        } catch (Exception e) {
+            Toast.makeText(this, R.string.password_qr_failed, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        ImageView image = new ImageView(this);
+        image.setImageBitmap(qr);
+        image.setAdjustViewBounds(true);
+        image.setPadding(32, 32, 32, 0);
+        image.setBackgroundColor(Color.WHITE);
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_AlertDialog)
+                .setTitle(R.string.password_qr_title)
+                .setMessage(R.string.password_qr_warning)
+                .setView(image)
+                .setPositiveButton(R.string.close, null)
+                .create();
+        // Keep the password out of screenshots and the recent-apps preview
+        if (dialog.getWindow() != null)
+            dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        dialog.show();
+    }
+
     private void showPasswordDialog() {
         View view = getLayoutInflater().inflate(R.layout.password_dialog, null);
         EditText editText = view.findViewById(R.id.password_edit);
@@ -2105,12 +2158,50 @@ public class MainActivity extends AppCompatActivity {
             errorText.setVisibility(View.GONE);
         });
 
+        view.findViewById(R.id.password_show_qr).setOnClickListener(v -> {
+            String text = editText.getText().toString();
+            int bytes = text.getBytes(StandardCharsets.UTF_8).length;
+            if (bytes < 8 || bytes > 256) {
+                errorText.setText(R.string.password_length_error);
+                errorText.setVisibility(View.VISIBLE);
+                return;
+            }
+            errorText.setVisibility(View.GONE);
+            showPasswordQr(text);
+        });
+
+        view.findViewById(R.id.password_scan_qr).setOnClickListener(v -> {
+            passwordScanTarget = editText;
+            ScanOptions options = new ScanOptions();
+            options.setDesiredBarcodeFormats(ScanOptions.QR_CODE);
+            options.setPrompt(getString(R.string.password_scan_prompt));
+            options.setBeepEnabled(false);
+            options.setOrientationLocked(false);
+            passwordScanner.launch(options);
+        });
+
+        view.findViewById(R.id.password_paste).setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = clipboard == null ? null : clipboard.getPrimaryClip();
+            CharSequence pasted = clip != null && clip.getItemCount() > 0 ? clip.getItemAt(0).coerceToText(this) : null;
+            if (pasted == null || pasted.toString().trim().isEmpty()) {
+                Toast.makeText(this, R.string.password_clipboard_empty, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            // Camera apps sometimes add a trailing newline to scanned text
+            String text = pasted.toString().trim();
+            editText.setText(text);
+            editText.setSelection(text.length());
+            errorText.setVisibility(View.GONE);
+        });
+
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_AlertDialog);
         builder.setTitle(R.string.password_dialog_title);
         builder.setView(view);
         builder.setCancelable(true);
 
         AlertDialog dialog = builder.create();
+        dialog.setOnDismissListener(d -> passwordScanTarget = null);
 
         cancelButton.setOnClickListener(v -> dialog.dismiss());
 

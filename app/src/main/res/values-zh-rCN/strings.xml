@@ -184,4 +184,14 @@ COFDMTV 解码器生成的文本消息是唯一存储在设备持久存储中的
 	<string name="contact_limit_reached">联系人已达上限（100）</string>
 	<string name="contact_delete_prompt">确定删除此联系人？</string>
 	<string name="contact_auto_added_at">自动添加于</string>
+	<!-- 密码二维码 -->
+	<string name="password_show_qr">显示二维码</string>
+	<string name="password_scan_qr">扫描二维码</string>
+	<string name="password_paste">粘贴</string>
+	<string name="password_qr_title">密码二维码</string>
+	<string name="password_qr_warning">任何扫描或拍下此二维码的人都能读取您的加密消息。请只给信任的人看。</string>
+	<string name="password_qr_failed">无法生成二维码</string>
+	<string name="password_scan_prompt">将相机对准密码二维码</string>
+	<string name="password_scanned">已从二维码填入密码。点击“确定”以使用。</string>
+	<string name="password_clipboard_empty">没有可粘贴的内容。请先复制密码。</string>
 </resources>

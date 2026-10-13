@@ -181,4 +181,14 @@ The resulting text message from the COFDMTV decoder is the only data that gets s
 	<string name="contact_limit_reached">Contact limit (100) reached</string>
 	<string name="contact_delete_prompt">Delete this contact?</string>
 	<string name="contact_auto_added_at">Auto-added at </string>
+	<!-- Password QR code -->
+	<string name="password_show_qr">Show QR</string>
+	<string name="password_scan_qr">Scan QR</string>
+	<string name="password_paste">Paste</string>
+	<string name="password_qr_title">Password QR code</string>
+	<string name="password_qr_warning">Anyone who scans or photographs this code can read your encrypted messages. Only show it to people you trust.</string>
+	<string name="password_qr_failed">Could not create the QR code</string>
+	<string name="password_scan_prompt">Point the camera at the password QR code</string>
+	<string name="password_scanned">Password filled in from the QR code. Tap Okay to use it.</string>
+	<string name="password_clipboard_empty">Nothing to paste. Copy the password first.</string>
 </resources>

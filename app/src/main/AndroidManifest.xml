@@ -34,6 +34,11 @@
 				<data android:mimeType="text/plain" />
 			</intent-filter>
 		</activity>
+		<!-- QR scanner for the encryption password: follow the phone's orientation instead of forcing landscape -->
+		<activity
+			android:name="com.journeyapps.barcodescanner.CaptureActivity"
+			android:screenOrientation="fullSensor"
+			tools:replace="screenOrientation" />
 	</application>
 
 </manifest>
