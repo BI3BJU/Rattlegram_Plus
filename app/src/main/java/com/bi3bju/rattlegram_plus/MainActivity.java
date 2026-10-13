@@ -57,6 +57,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
+import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Button;
 import android.widget.Toast;
@@ -78,6 +80,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -168,6 +171,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOCATION_FORMAT = "📍[geo:%.6f,%.6f]";
     // Maximum acceptable location age (5 minutes)
     private static final long MAX_LOCATION_AGE_MS = 5 * 60 * 1000;
+    // SALUTE report form: remembered between uses
+    private int saluteLocationFormat = GeoFormat.LAT_LONG;
+    private boolean saluteTimeUtc = true;
     // Timeout for actively requesting a location (15 seconds)
     private static final long LOCATION_REQUEST_TIMEOUT_MS = 15 * 1000;
 
@@ -1833,6 +1839,7 @@ public class MainActivity extends AppCompatActivity {
         EditText edit = view.findViewById(R.id.message);
         CheckBox encryptCheck = view.findViewById(R.id.encrypt_checkbox);
         TextView capacity = view.findViewById(R.id.capacity);
+        view.findViewById(R.id.salute_button).setOnClickListener(v -> showSaluteDialog(edit));
 
         // Location messages are not allowed to be encrypted (otherwise the receiver cannot recognize [geo:...])
         boolean isLocationMsg = temp != null && temp.contains("[geo:");
@@ -1922,6 +1929,124 @@ public class MainActivity extends AppCompatActivity {
         });
 
         edit.setText(temp == null ? draftText : temp);
+    }
+
+    // ========== SALUTE report ==========
+    /**
+     * Shows the SALUTE form. On OK the compact report is added to the compose box
+     * (on a new line if the box already has text).
+     */
+    private void showSaluteDialog(EditText target) {
+        View view = getLayoutInflater().inflate(R.layout.salute_dialog, null);
+        EditText sizeEdit = view.findViewById(R.id.salute_size);
+        EditText activityEdit = view.findViewById(R.id.salute_activity);
+        EditText locationEdit = view.findViewById(R.id.salute_location);
+        EditText unitEdit = view.findViewById(R.id.salute_unit);
+        EditText timeEdit = view.findViewById(R.id.salute_time);
+        EditText equipmentEdit = view.findViewById(R.id.salute_equipment);
+        Spinner formatSpinner = view.findViewById(R.id.salute_location_format);
+        RadioGroup zoneGroup = view.findViewById(R.id.salute_time_zone);
+        Button gpsButton = view.findViewById(R.id.salute_gps_button);
+        Button nowButton = view.findViewById(R.id.salute_now_button);
+
+        // The last values this form filled in itself, so switching format/zone only
+        // rewrites them while the user has not typed over them.
+        final Location[] fix = {null};
+        final String[] autoLocation = {null};
+        final Date[] fixTime = {null};
+        final String[] autoTime = {null};
+
+        formatSpinner.setSelection(saluteLocationFormat);
+        zoneGroup.check(saluteTimeUtc ? R.id.salute_time_utc : R.id.salute_time_local);
+
+        Runnable fillLocation = () -> {
+            if (fix[0] == null) return;
+            String text = GeoFormat.format(saluteLocationFormat, fix[0].getLatitude(), fix[0].getLongitude());
+            if (text == null) {
+                Toast.makeText(this, R.string.salute_mgrs_unavailable, Toast.LENGTH_SHORT).show();
+                text = GeoFormat.latLong(fix[0].getLatitude(), fix[0].getLongitude());
+            }
+            locationEdit.setText(text);
+            autoLocation[0] = text;
+        };
+        Runnable fillTime = () -> {
+            if (fixTime[0] == null) return;
+            String text = saluteTimeUtc
+                    ? SaluteReport.utcTime(fixTime[0])
+                    : SaluteReport.localTime(fixTime[0], TimeZone.getDefault());
+            timeEdit.setText(text);
+            autoTime[0] = text;
+        };
+
+        formatSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(android.widget.AdapterView<?> parent, View v, int position, long id) {
+                if (position == saluteLocationFormat) return;
+                saluteLocationFormat = position;
+                String current = locationEdit.getText().toString();
+                if (current.equals(autoLocation[0])) fillLocation.run();
+            }
+
+            @Override
+            public void onNothingSelected(android.widget.AdapterView<?> parent) {}
+        });
+
+        zoneGroup.setOnCheckedChangeListener((group, checkedId) -> {
+            saluteTimeUtc = checkedId == R.id.salute_time_utc;
+            String current = timeEdit.getText().toString();
+            if (current.equals(autoTime[0])) fillTime.run();
+        });
+
+        nowButton.setOnClickListener(v -> {
+            fixTime[0] = new Date();
+            fillTime.run();
+        });
+
+        gpsButton.setOnClickListener(v -> {
+            if (!hasLocationPermission()) {
+                Toast.makeText(this, R.string.location_permission_denied, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (!isLocationServiceEnabled()) {
+                Toast.makeText(this, R.string.location_service_disabled, Toast.LENGTH_SHORT).show();
+                return;
+            }
+            final Location last = getLastKnownLocation();
+            if (isLocationFresh(last)) {
+                fix[0] = last;
+                fillLocation.run();
+                return;
+            }
+            Toast.makeText(this, R.string.location_fetching, Toast.LENGTH_SHORT).show();
+            requestCurrentLocation(loc -> {
+                Location best = loc != null ? loc : last;
+                if (best == null) {
+                    Toast.makeText(this, R.string.location_failed, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                fix[0] = best;
+                fillLocation.run();
+            });
+        });
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.Theme_AlertDialog);
+        builder.setTitle(R.string.salute_title);
+        builder.setView(view);
+        builder.setNegativeButton(R.string.cancel, null);
+        builder.setPositiveButton(R.string.okay, (dialogInterface, i) -> {
+            String report = SaluteReport.build(
+                    sizeEdit.getText().toString(),
+                    activityEdit.getText().toString(),
+                    locationEdit.getText().toString(),
+                    unitEdit.getText().toString(),
+                    timeEdit.getText().toString(),
+                    equipmentEdit.getText().toString());
+            if (report.isEmpty()) return;
+            String existing = target.getText().toString();
+            target.setText(existing.trim().isEmpty() ? report : existing + "\n" + report);
+            target.setSelection(target.getText().length());
+        });
+        builder.show();
     }
 
     private void transmitMessage(String message, boolean encrypt) {

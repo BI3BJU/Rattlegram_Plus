@@ -184,4 +184,24 @@ COFDMTV 解码器生成的文本消息是唯一存储在设备持久存储中的
 	<string name="contact_limit_reached">联系人已达上限（100）</string>
 	<string name="contact_delete_prompt">确定删除此联系人？</string>
 	<string name="contact_auto_added_at">自动添加于</string>
+	<!-- SALUTE 报告 -->
+	<string name="salute_button">SALUTE 报告</string>
+	<string name="salute_title">SALUTE 报告</string>
+	<string name="salute_size">S – 数量</string>
+	<string name="salute_size_hint">多少（人员、车辆）</string>
+	<string name="salute_activity">A – 活动</string>
+	<string name="salute_activity_hint">正在做什么</string>
+	<string name="salute_location">L – 位置</string>
+	<string name="salute_location_hint">网格、经纬度或地标</string>
+	<string name="salute_unit">U – 单位</string>
+	<string name="salute_unit_hint">单位、制服、标识</string>
+	<string name="salute_time">T – 时间</string>
+	<string name="salute_time_hint">观察时间，例如 12:54UTC</string>
+	<string name="salute_equipment">E – 装备</string>
+	<string name="salute_equipment_hint">武器、车辆、装备</string>
+	<string name="salute_from_gps">使用 GPS</string>
+	<string name="salute_now">现在</string>
+	<string name="salute_utc">UTC</string>
+	<string name="salute_local">本地</string>
+	<string name="salute_mgrs_unavailable">此纬度无法使用 MGRS，已改用经纬度</string>
 </resources>

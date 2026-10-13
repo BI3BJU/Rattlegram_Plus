@@ -181,4 +181,29 @@ The resulting text message from the COFDMTV decoder is the only data that gets s
 	<string name="contact_limit_reached">Contact limit (100) reached</string>
 	<string name="contact_delete_prompt">Delete this contact?</string>
 	<string name="contact_auto_added_at">Auto-added at </string>
+	<!-- SALUTE report -->
+	<string name="salute_button">SALUTE Report</string>
+	<string name="salute_title">SALUTE Report</string>
+	<string name="salute_size">S – Size</string>
+	<string name="salute_size_hint">How many (people, vehicles)</string>
+	<string name="salute_activity">A – Activity</string>
+	<string name="salute_activity_hint">What they are doing</string>
+	<string name="salute_location">L – Location</string>
+	<string name="salute_location_hint">Grid, lat/long or landmark</string>
+	<string name="salute_unit">U – Unit</string>
+	<string name="salute_unit_hint">Unit, uniform, markings</string>
+	<string name="salute_time">T – Time</string>
+	<string name="salute_time_hint">When it was seen, e.g. 12:54UTC</string>
+	<string name="salute_equipment">E – Equipment</string>
+	<string name="salute_equipment_hint">Weapons, vehicles, gear</string>
+	<string name="salute_from_gps">From GPS</string>
+	<string name="salute_now">Now</string>
+	<string name="salute_utc">UTC</string>
+	<string name="salute_local">Local</string>
+	<string name="salute_mgrs_unavailable">MGRS is not available at this latitude; using lat/long</string>
+	<string-array name="salute_location_formats">
+		<item>Lat/Long</item>
+		<item>Maidenhead</item>
+		<item>MGRS</item>
+	</string-array>
 </resources>

@@ -8,11 +8,20 @@
     <EditText
         android:id="@+id/message"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
         android:autofillHints="Hello World!"
+        android:gravity="top|start"
         android:hint="@string/message_hint"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        android:minLines="3" />
+
+    <Button
+        android:id="@+id/salute_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:text="@string/salute_button"
+        style="?android:attr/borderlessButtonStyle" />
 
     <LinearLayout
         android:layout_width="match_parent"
