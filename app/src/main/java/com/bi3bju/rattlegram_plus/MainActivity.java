@@ -1839,7 +1839,8 @@ public class MainActivity extends AppCompatActivity {
         EditText edit = view.findViewById(R.id.message);
         CheckBox encryptCheck = view.findViewById(R.id.encrypt_checkbox);
         TextView capacity = view.findViewById(R.id.capacity);
-        view.findViewById(R.id.salute_button).setOnClickListener(v -> showSaluteDialog(edit));
+        view.findViewById(R.id.salute_button).setOnClickListener(
+                v -> showSaluteDialog(edit, encryptCheck.isChecked() && encryptCheck.isEnabled()));
 
         // Location messages are not allowed to be encrypted (otherwise the receiver cannot recognize [geo:...])
         boolean isLocationMsg = temp != null && temp.contains("[geo:");
@@ -1934,9 +1935,10 @@ public class MainActivity extends AppCompatActivity {
     // ========== SALUTE report ==========
     /**
      * Shows the SALUTE form. On OK the compact report is added to the compose box
-     * (on a new line if the box already has text).
+     * (on a new line if the box already has text). A live counter shows the room left in
+     * the message, which is smaller when it will be encrypted.
      */
-    private void showSaluteDialog(EditText target) {
+    private void showSaluteDialog(EditText target, boolean encrypted) {
         View view = getLayoutInflater().inflate(R.layout.salute_dialog, null);
         EditText sizeEdit = view.findViewById(R.id.salute_size);
         EditText activityEdit = view.findViewById(R.id.salute_activity);
@@ -1948,6 +1950,8 @@ public class MainActivity extends AppCompatActivity {
         RadioGroup zoneGroup = view.findViewById(R.id.salute_time_zone);
         Button gpsButton = view.findViewById(R.id.salute_gps_button);
         Button nowButton = view.findViewById(R.id.salute_now_button);
+        TextView bytesView = view.findViewById(R.id.salute_bytes);
+        EditText[] fields = {sizeEdit, activityEdit, locationEdit, unitEdit, timeEdit, equipmentEdit};
 
         // The last values this form filled in itself, so switching format/zone only
         // rewrites them while the user has not typed over them.
@@ -1977,6 +1981,39 @@ public class MainActivity extends AppCompatActivity {
             timeEdit.setText(text);
             autoTime[0] = text;
         };
+
+        // Same limits as the compose window: 170 bytes plain, 99 bytes before encryption
+        final int limit = encrypted ? 99 : 170;
+        Runnable updateBytes = () -> {
+            String report = SaluteReport.build(sizeEdit.getText().toString(), activityEdit.getText().toString(),
+                    locationEdit.getText().toString(), unitEdit.getText().toString(),
+                    timeEdit.getText().toString(), equipmentEdit.getText().toString());
+            String existing = target.getText().toString();
+            String message = existing.trim().isEmpty() ? report : existing + "\n" + report;
+            int left = limit - message.getBytes(StandardCharsets.UTF_8).length;
+            if (left >= 0) {
+                bytesView.setText(getString(encrypted ? R.string.salute_bytes_left_encrypted : R.string.salute_bytes_left, left));
+                bytesView.setTextColor(ContextCompat.getColor(this, R.color.tint));
+            } else {
+                bytesView.setText(getString(encrypted ? R.string.salute_bytes_over_encrypted : R.string.salute_bytes_over, -left));
+                bytesView.setTextColor(Color.RED);
+            }
+        };
+        TextWatcher bytesWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                updateBytes.run();
+            }
+        };
+        for (EditText field : fields)
+            field.addTextChangedListener(bytesWatcher);
+        updateBytes.run();
 
         formatSpinner.setOnItemSelectedListener(new android.widget.AdapterView.OnItemSelectedListener() {
             @Override

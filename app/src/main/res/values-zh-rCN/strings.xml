@@ -203,5 +203,9 @@ COFDMTV 解码器生成的文本消息是唯一存储在设备持久存储中的
 	<string name="salute_now">现在</string>
 	<string name="salute_utc">UTC</string>
 	<string name="salute_local">本地</string>
+	<string name="salute_bytes_left">剩余 %1$d 字节</string>
+	<string name="salute_bytes_left_encrypted">剩余 %1$d 字节（加密）</string>
+	<string name="salute_bytes_over">超出 %1$d 字节，请缩短部分内容。</string>
+	<string name="salute_bytes_over_encrypted">加密消息超出 %1$d 字节，请缩短部分内容。</string>
 	<string name="salute_mgrs_unavailable">此纬度无法使用 MGRS，已改用经纬度</string>
 </resources>

@@ -200,6 +200,10 @@ The resulting text message from the COFDMTV decoder is the only data that gets s
 	<string name="salute_now">Now</string>
 	<string name="salute_utc">UTC</string>
 	<string name="salute_local">Local</string>
+	<string name="salute_bytes_left">%1$d bytes left</string>
+	<string name="salute_bytes_left_encrypted">%1$d bytes left (encrypted)</string>
+	<string name="salute_bytes_over">%1$d bytes too long. Shorten some fields.</string>
+	<string name="salute_bytes_over_encrypted">%1$d bytes too long for an encrypted message. Shorten some fields.</string>
 	<string name="salute_mgrs_unavailable">MGRS is not available at this latitude; using lat/long</string>
 	<string-array name="salute_location_formats">
 		<item>Lat/Long</item>

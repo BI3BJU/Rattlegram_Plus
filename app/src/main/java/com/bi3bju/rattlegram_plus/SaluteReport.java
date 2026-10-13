@@ -13,8 +13,9 @@ final class SaluteReport {
     private SaluteReport() {}
 
     /**
-     * Compact report: a "SALUTE" line, then one "X:value" line per filled field.
-     * Empty fields are left out to save bytes. Returns "" if every field is empty.
+     * Compact report: one "X value" line per filled field, e.g. "S 3 dismounted".
+     * No header line and empty fields are left out, so a report fits in an encrypted message.
+     * Returns "" if every field is empty.
      */
     static String build(String size, String activity, String location,
                         String unit, String time, String equipment) {
@@ -25,14 +26,16 @@ final class SaluteReport {
         append(sb, 'U', unit);
         append(sb, 'T', time);
         append(sb, 'E', equipment);
-        return sb.length() == 0 ? "" : "SALUTE" + sb;
+        return sb.toString();
     }
 
     private static void append(StringBuilder sb, char label, String value) {
         if (value == null) return;
         String v = value.replaceAll("\\s+", " ").trim();
         if (v.isEmpty()) return;
-        sb.append('\n').append(label).append(':').append(v);
+        if (sb.length() > 0)
+            sb.append('\n');
+        sb.append(label).append(' ').append(v);
     }
 
     /** UTC time, e.g. "12:54UTC". */
