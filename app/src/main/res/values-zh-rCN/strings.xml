@@ -184,4 +184,6 @@ COFDMTV 解码器生成的文本消息是唯一存储在设备持久存储中的
 	<string name="contact_limit_reached">联系人已达上限（100）</string>
 	<string name="contact_delete_prompt">确定删除此联系人？</string>
 	<string name="contact_auto_added_at">自动添加于</string>
+	<string name="delete_messages_on_close">关闭时删除消息</string>
+	<string name="delete_messages_on_close_prompt">每次关闭应用时，所有消息都将被永久删除。确定启用吗？</string>
 </resources>

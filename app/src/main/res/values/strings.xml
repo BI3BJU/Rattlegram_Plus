@@ -181,4 +181,6 @@ The resulting text message from the COFDMTV decoder is the only data that gets s
 	<string name="contact_limit_reached">Contact limit (100) reached</string>
 	<string name="contact_delete_prompt">Delete this contact?</string>
 	<string name="contact_auto_added_at">Auto-added at </string>
+	<string name="delete_messages_on_close">Delete Messages on Close</string>
+	<string name="delete_messages_on_close_prompt">All messages will be permanently deleted every time the app is closed. Enable this?</string>
 </resources>
