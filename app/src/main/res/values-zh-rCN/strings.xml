@@ -184,4 +184,27 @@ COFDMTV 解码器生成的文本消息是唯一存储在设备持久存储中的
 	<string name="contact_limit_reached">联系人已达上限（100）</string>
 	<string name="contact_delete_prompt">确定删除此联系人？</string>
 	<string name="contact_auto_added_at">自动添加于</string>
+	<!-- 蓝牙电台 -->
+	<string name="bluetooth_radio">蓝牙电台</string>
+	<string name="radio_connection">连接 / 断开</string>
+	<string name="radio_mute_speaker">静音电台扬声器</string>
+	<string name="radio_connected_muted">已连接 %1$s。连接期间电台扬声器已静音。</string>
+	<string name="radio_disconnected_muted">%1$s 已断开。如果电台扬声器仍无声音，请调节音量旋钮或重新连接。</string>
+	<string name="radio_choose">选择电台</string>
+	<string name="radio_connect">连接</string>
+	<string name="radio_disconnect">断开</string>
+	<string name="radio_connecting">正在连接 %1$s…</string>
+	<string name="radio_connected_to">已连接 %1$s</string>
+	<string name="radio_connected_tip">已连接 %1$s。提示：可以把电台音量调到最小，解码仍然正常。</string>
+	<string name="radio_listening">通过 %1$s 监听</string>
+	<string name="radio_disconnected">%1$s 已断开</string>
+	<string name="radio_connect_failed">无法连接 %1$s。请确认电台已开机，并关闭正在使用它的其他应用（如 HTCommander）。</string>
+	<string name="radio_pair_new">配对新电台</string>
+	<string name="radio_pair_title">配对电台</string>
+	<string name="radio_pair_help">1. 让 BTECH UV-Pro 进入配对模式（参见电台说明书）。处于配对模式时，指示灯红绿交替闪烁。\n\n2. 打开本机的蓝牙设置并配对电台，它显示为 UV-PRO。\n\n3. 返回此处，再次选择“蓝牙电台”。</string>
+	<string name="radio_open_bluetooth_settings">打开蓝牙设置</string>
+	<string name="radio_bluetooth_off">请先打开蓝牙</string>
+	<string name="radio_permission_denied">蓝牙权限被拒绝</string>
+	<string name="radio_busy">电台仍在发射</string>
+	<string name="radio_disconnect_first">请先断开蓝牙电台</string>
 </resources>

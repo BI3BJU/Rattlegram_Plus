@@ -106,6 +106,14 @@
     </item>
 
     <!-- Repeater mode -->
+    <!-- Bluetooth radio (BTech UV-Pro / Vero VR-N76) -->
+    <item android:title="@string/bluetooth_radio">
+        <menu>
+            <item android:id="@+id/action_bluetooth_radio" android:title="@string/radio_connection" />
+            <item android:id="@+id/action_radio_mute_speaker" android:title="@string/radio_mute_speaker" android:checkable="true" />
+        </menu>
+    </item>
+
     <item android:title="@string/repeater_mode">
         <menu>
             <group android:checkableBehavior="single">

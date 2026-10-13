@@ -23,7 +23,13 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        native-lib.cpp)
+        native-lib.cpp
+        # Bluetooth radio audio: JNI bridge + google/libsbc (Apache-2.0, see sbc/LICENSE)
+        radio-sbc.c
+        sbc/sbc.c
+        sbc/bits.c)
+
+target_include_directories(rattlegram PRIVATE sbc)
 
 # Searches for a specified prebuilt library and stores the path as a
 # variable. Because CMake includes system libraries in the search path by

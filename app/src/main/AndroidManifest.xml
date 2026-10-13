@@ -8,6 +8,10 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<!-- ========== Network permission (needed by WebView to load maps) ========== -->
 	<uses-permission android:name="android.permission.INTERNET" />
+	<!-- ========== Bluetooth radio audio (BTech UV-Pro / Vero VR-N76) ========== -->
+	<uses-permission android:name="android.permission.BLUETOOTH" android:maxSdkVersion="30" />
+	<uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+	<uses-feature android:name="android.hardware.bluetooth" android:required="false" />
 
 	<application
 		android:allowBackup="true"

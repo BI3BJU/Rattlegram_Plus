@@ -18,6 +18,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothManager;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -36,6 +39,7 @@ import android.media.AudioTrack;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -78,6 +82,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -103,6 +108,12 @@ public class MainActivity extends AppCompatActivity {
 
     private final int permissionID = 1;
     private final int locationPermissionID = 100;
+    private final int bluetoothPermissionID = 200;
+    // Bluetooth radio (BTech UV-Pro / Vero VR-N76) audio link
+    private RadioLink radioLink;
+    private boolean activityResumed;
+    // Encoder output at the radio's 32 kHz: symbol 5120 + guard 640 samples
+    private static final int RADIO_EXTENDED_LENGTH = (1280 * RadioLink.SAMPLE_RATE / 8000) * 9 / 8;
     private final int audioFormat = AudioFormat.ENCODING_PCM_16BIT;
     private final int sampleSize = 2;
     private final int spectrumWidth = 360, spectrumHeight = 128;
@@ -270,68 +281,73 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onPeriodicNotification(AudioRecord audioRecord) {
             audioRecord.read(recordBuffer, 0, recordBuffer.length);
-            if (!feedDecoder(recordBuffer, recordCount, recordChannel))
-                return;
-            int status = processDecoder();
-            if (showSpectrum) {
-                spectrumDecoder(spectrumPixels, spectrogramPixels, spectrumTint);
-                spectrumBitmap.setPixels(spectrumPixels, 0, spectrumWidth, 0, 0, spectrumWidth, spectrumHeight);
-                spectrogramBitmap.setPixels(spectrogramPixels, 0, spectrogramWidth, 0, 0, spectrogramWidth, spectrogramHeight);
-                spectrumView.invalidate();
-                spectrogramView.invalidate();
-            }
-            final int STATUS_OKAY = 0;
-            final int STATUS_FAIL = 1;
-            final int STATUS_SYNC = 2;
-            final int STATUS_DONE = 3;
-            final int STATUS_HEAP = 4;
-            final int STATUS_NOPE = 5;
-            final int STATUS_PING = 6;
-            switch (status) {
-                case STATUS_OKAY:
-                    break;
-                case STATUS_FAIL:
-                    setStatus(getString(R.string.preamble_fail), true);
-                    break;
-                case STATUS_NOPE:
-                    stagedDecoder(stagedCFO, stagedMode, stagedCall);
-                    fromStatus();
-                    addLine(parseCallSign(stagedCall), getString(R.string.preamble_nope, stagedMode[0]));
-                    break;
-                case STATUS_PING:
-                    stagedDecoder(stagedCFO, stagedMode, stagedCall);
-                    fromStatus();
-                    // Ping also auto-saves the sender's call sign
-                    String pingSender = parseCallSign(stagedCall);
-                    autoSaveContact(pingSender);
-                    addLine(pingSender, getString(R.string.preamble_ping));
-                    break;
-                case STATUS_HEAP:
-                    setStatus(getString(R.string.heap_error));
-                    audioRecord.stop();
-                    break;
-                case STATUS_SYNC:
-                    stagedDecoder(stagedCFO, stagedMode, stagedCall);
-                    fromStatus();
-                    break;
-                case STATUS_DONE:
-                    int result = fetchDecoder(payload);
-                    if (result < 0) {
-                        addLine(parseCallSign(stagedCall), getString(R.string.decoding_failed));
-                    } else {
-                        setStatus(getResources().getQuantityString(R.plurals.bits_flipped, result, result), true);
-                        String sender = parseCallSign(stagedCall);
-                        if (repeaterMode) {
-                            repeatMessage();
-                        } else {
-                            autoSaveContact(sender);
-                            addMessage(sender, getString(R.string.received), new String(payload).trim());
-                        }
-                    }
-                    break;
-            }
+            decodeAudio(recordBuffer, recordCount, recordChannel);
         }
     };
+
+    /** Feeds one chunk of received audio (microphone or Bluetooth radio) to the decoder and handles the result. */
+    private void decodeAudio(short[] buffer, int count, int channel) {
+        if (!feedDecoder(buffer, count, channel))
+            return;
+        int status = processDecoder();
+        if (showSpectrum) {
+            spectrumDecoder(spectrumPixels, spectrogramPixels, spectrumTint);
+            spectrumBitmap.setPixels(spectrumPixels, 0, spectrumWidth, 0, 0, spectrumWidth, spectrumHeight);
+            spectrogramBitmap.setPixels(spectrogramPixels, 0, spectrogramWidth, 0, 0, spectrogramWidth, spectrogramHeight);
+            spectrumView.invalidate();
+            spectrogramView.invalidate();
+        }
+        final int STATUS_OKAY = 0;
+        final int STATUS_FAIL = 1;
+        final int STATUS_SYNC = 2;
+        final int STATUS_DONE = 3;
+        final int STATUS_HEAP = 4;
+        final int STATUS_NOPE = 5;
+        final int STATUS_PING = 6;
+        switch (status) {
+            case STATUS_OKAY:
+                break;
+            case STATUS_FAIL:
+                setStatus(getString(R.string.preamble_fail), true);
+                break;
+            case STATUS_NOPE:
+                stagedDecoder(stagedCFO, stagedMode, stagedCall);
+                fromStatus();
+                addLine(parseCallSign(stagedCall), getString(R.string.preamble_nope, stagedMode[0]));
+                break;
+            case STATUS_PING:
+                stagedDecoder(stagedCFO, stagedMode, stagedCall);
+                fromStatus();
+                // Ping also auto-saves the sender's call sign
+                String pingSender = parseCallSign(stagedCall);
+                autoSaveContact(pingSender);
+                addLine(pingSender, getString(R.string.preamble_ping));
+                break;
+            case STATUS_HEAP:
+                setStatus(getString(R.string.heap_error));
+                stopListening();
+                break;
+            case STATUS_SYNC:
+                stagedDecoder(stagedCFO, stagedMode, stagedCall);
+                fromStatus();
+                break;
+            case STATUS_DONE:
+                int result = fetchDecoder(payload);
+                if (result < 0) {
+                    addLine(parseCallSign(stagedCall), getString(R.string.decoding_failed));
+                } else {
+                    setStatus(getResources().getQuantityString(R.plurals.bits_flipped, result, result), true);
+                    String sender = parseCallSign(stagedCall);
+                    if (repeaterMode) {
+                        repeatMessage();
+                    } else {
+                        autoSaveContact(sender);
+                        addMessage(sender, getString(R.string.received), new String(payload).trim());
+                    }
+                }
+                break;
+        }
+    }
 
     private void setStatus(String str, boolean tmp) {
         if (statusTimer != null)
@@ -546,6 +562,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startListening() {
+        if (isRadioConnected()) {
+            setStatus(getString(R.string.radio_listening, radioLink.getDeviceName()));
+            return;
+        }
         if (audioRecord != null) {
             audioRecord.startRecording();
             if (audioRecord.getRecordingState() == AudioRecord.RECORDSTATE_RECORDING) {
@@ -608,6 +628,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecordRate(int newSampleRate) {
+        if (radioBlocksAudioChange())
+            return;
         if (recordRate == newSampleRate)
             return;
         recordRate = newSampleRate;
@@ -616,6 +638,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setRecordChannel(int newChannelSelect) {
+        if (radioBlocksAudioChange())
+            return;
         if (recordChannel == newChannelSelect)
             return;
         recordChannel = newChannelSelect;
@@ -624,6 +648,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAudioSource(int newAudioSource) {
+        if (radioBlocksAudioChange())
+            return;
         if (audioSource == newAudioSource)
             return;
         audioSource = newAudioSource;
@@ -642,6 +668,14 @@ public class MainActivity extends AppCompatActivity {
                     initAudioRecord(false);
                 }
             }
+            return;
+        }
+
+        if (requestCode == bluetoothPermissionID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                showRadioDialog();
+            else
+                Toast.makeText(this, R.string.radio_permission_denied, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -864,6 +898,7 @@ public class MainActivity extends AppCompatActivity {
         ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         status = binding.status;
         handler = new Handler(getMainLooper());
+        radioLink = new RadioLink(radioListener);
         setContentView(binding.getRoot());
         handleInsets();
         stagedCFO = new float[1];
@@ -1338,6 +1373,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setOutputRate(int newSampleRate) {
+        if (radioBlocksAudioChange())
+            return;
         if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING)
             return;
         if (outputRate == newSampleRate)
@@ -1428,6 +1465,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setOutputChannel(int newChannelSelect) {
+        if (radioBlocksAudioChange())
+            return;
         if (audioTrack.getPlayState() == AudioTrack.PLAYSTATE_PLAYING)
             return;
         if (outputChannel == newChannelSelect)
@@ -1473,6 +1512,7 @@ public class MainActivity extends AppCompatActivity {
         updateRepeaterDebounceMenu();
         updateFancyHeaderMenu();
         updateRepeaterModeMenu();
+        menu.findItem(R.id.action_radio_mute_speaker).setChecked(isRadioMuteEnabled());
         return true;
     }
 
@@ -1535,6 +1575,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (id == R.id.action_ping) {
             toggleBeacon();
+            return true;
+        }
+
+        if (id == R.id.action_bluetooth_radio) {
+            showRadioDialog();
+            return true;
+        }
+        if (id == R.id.action_radio_mute_speaker) {
+            toggleRadioMute(item);
             return true;
         }
 
@@ -1924,7 +1973,189 @@ public class MainActivity extends AppCompatActivity {
         edit.setText(temp == null ? draftText : temp);
     }
 
+    // ========== Bluetooth radio ==========
+
+    private boolean isRadioConnected() {
+        return radioLink != null && radioLink.isConnected();
+    }
+
+    /** While the radio is connected the decoder and encoder run at its 32 kHz rate, so audio settings stay locked. */
+    private boolean radioBlocksAudioChange() {
+        if (!isRadioConnected())
+            return false;
+        Toast.makeText(this, R.string.radio_disconnect_first, Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    private final RadioLink.Listener radioListener = new RadioLink.Listener() {
+        @Override
+        public void onRadioAudio(short[] pcm, int count) {
+            if (activityResumed && isRadioConnected() && !radioLink.isTransmitting())
+                decodeAudio(pcm, count, 0);
+        }
+
+        @Override
+        public void onRadioConnected(String name) {
+            stopListening();
+            if (!createDecoder(RadioLink.SAMPLE_RATE) || !createEncoder(RadioLink.SAMPLE_RATE)) {
+                setStatus(getString(R.string.heap_error));
+                radioLink.disconnect();
+                return;
+            }
+            Toast.makeText(MainActivity.this,
+                    getString(isRadioMuteEnabled() ? R.string.radio_connected_muted : R.string.radio_connected_tip, name),
+                    Toast.LENGTH_LONG).show();
+            setStatus(getString(R.string.radio_listening, name));
+        }
+
+        @Override
+        public void onRadioDisconnected(String name, boolean wasConnected) {
+            if (!createDecoder(recordRate) || !createEncoder(outputRate))
+                setStatus(getString(R.string.heap_error));
+            boolean volumePending = getPreferences(Context.MODE_PRIVATE).getInt("radioRestoreVolume", -1) >= 0;
+            String message;
+            if (!wasConnected)
+                message = getString(R.string.radio_connect_failed, name);
+            else if (volumePending)
+                message = getString(R.string.radio_disconnected_muted, name);
+            else
+                message = getString(R.string.radio_disconnected, name);
+            Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            if (activityResumed)
+                startListening();
+        }
+
+        @Override
+        public void onRadioTransmitDone() {
+            if (isRadioConnected())
+                setStatus(getString(R.string.radio_listening, radioLink.getDeviceName()));
+        }
+
+        @Override
+        public void onRadioSpeakerMuted(int original) {
+            // Remember the radio's volume so it can still be restored if the link drops unexpectedly.
+            getPreferences(Context.MODE_PRIVATE).edit().putInt("radioRestoreVolume", original).apply();
+        }
+
+        @Override
+        public void onRadioSpeakerRestored() {
+            getPreferences(Context.MODE_PRIVATE).edit().remove("radioRestoreVolume").apply();
+        }
+    };
+
+    private boolean isRadioMuteEnabled() {
+        return getPreferences(Context.MODE_PRIVATE).getBoolean("radioMuteSpeaker", true);
+    }
+
+    private void toggleRadioMute(MenuItem item) {
+        boolean mute = !isRadioMuteEnabled();
+        getPreferences(Context.MODE_PRIVATE).edit().putBoolean("radioMuteSpeaker", mute).apply();
+        item.setChecked(mute);
+        radioLink.setSpeakerMuted(mute);
+    }
+
+    /** Renders the configured transmission at 32 kHz and hands it to the radio after delayMs. */
+    private void transmitViaRadio(long delayMs) {
+        short[] symbol = new short[RADIO_EXTENDED_LENGTH];
+        List<short[]> symbols = new ArrayList<>();
+        // A full-length message is well under 100 symbols; the cap only guards against a runaway loop.
+        while (symbols.size() < 400 && produceEncoder(symbol, 0))
+            symbols.add(symbol.clone());
+        short[] pcm = new short[symbols.size() * RADIO_EXTENDED_LENGTH];
+        for (int i = 0; i < symbols.size(); ++i)
+            System.arraycopy(symbols.get(i), 0, pcm, i * RADIO_EXTENDED_LENGTH, RADIO_EXTENDED_LENGTH);
+        handler.postDelayed(() -> {
+            if (radioLink.transmit(pcm, pcm.length))
+                setStatus(getString(R.string.transmitting));
+            else
+                Toast.makeText(this, R.string.radio_busy, Toast.LENGTH_SHORT).show();
+        }, delayMs);
+    }
+
+    @SuppressWarnings("MissingPermission")
+    private void showRadioDialog() {
+        if (isRadioConnected()) {
+            new AlertDialog.Builder(this, R.style.Theme_AlertDialog)
+                    .setTitle(R.string.bluetooth_radio)
+                    .setMessage(getString(R.string.radio_connected_to, radioLink.getDeviceName()))
+                    .setPositiveButton(R.string.radio_disconnect, (dialog, which) -> radioLink.disconnect())
+                    .setNegativeButton(R.string.cancel, null)
+                    .show();
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+                && ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.BLUETOOTH_CONNECT}, bluetoothPermissionID);
+            return;
+        }
+        BluetoothManager manager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
+        BluetoothAdapter adapter = manager == null ? null : manager.getAdapter();
+        if (adapter == null || !adapter.isEnabled()) {
+            Toast.makeText(this, R.string.radio_bluetooth_off, Toast.LENGTH_LONG).show();
+            return;
+        }
+        Set<BluetoothDevice> bonded;
+        try {
+            bonded = adapter.getBondedDevices();
+        } catch (SecurityException e) {
+            Toast.makeText(this, R.string.radio_permission_denied, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (bonded == null || bonded.isEmpty()) {
+            showRadioPairingHelp();
+            return;
+        }
+        String lastAddress = getPreferences(Context.MODE_PRIVATE).getString("radioAddress", "");
+        List<BluetoothDevice> devices = new ArrayList<>(bonded);
+        String[] names = new String[devices.size()];
+        int selected = 0;
+        for (int i = 0; i < devices.size(); ++i) {
+            BluetoothDevice d = devices.get(i);
+            String name = d.getName() != null ? d.getName() : d.getAddress();
+            names[i] = name;
+            String upper = name.toUpperCase(Locale.US);
+            if (d.getAddress().equals(lastAddress)
+                    || (lastAddress.isEmpty() && (upper.contains("UV-PRO") || upper.contains("VR-N76"))))
+                selected = i;
+        }
+        final int[] choice = {selected};
+        new AlertDialog.Builder(this, R.style.Theme_AlertDialog)
+                .setTitle(R.string.radio_choose)
+                .setSingleChoiceItems(names, selected, (dialog, which) -> choice[0] = which)
+                .setPositiveButton(R.string.radio_connect, (dialog, which) -> {
+                    BluetoothDevice device = devices.get(choice[0]);
+                    getPreferences(Context.MODE_PRIVATE).edit().putString("radioAddress", device.getAddress()).apply();
+                    setStatus(getString(R.string.radio_connecting, names[choice[0]]));
+                    radioLink.configureSpeakerMute(isRadioMuteEnabled(),
+                            getPreferences(Context.MODE_PRIVATE).getInt("radioRestoreVolume", -1));
+                    radioLink.connect(device);
+                })
+                .setNeutralButton(R.string.radio_pair_new, (dialog, which) -> showRadioPairingHelp())
+                .setNegativeButton(R.string.cancel, null)
+                .show();
+    }
+
+    /** Explains how to pair the radio, with a shortcut to the system Bluetooth settings. */
+    private void showRadioPairingHelp() {
+        new AlertDialog.Builder(this, R.style.Theme_AlertDialog)
+                .setTitle(R.string.radio_pair_title)
+                .setMessage(R.string.radio_pair_help)
+                .setPositiveButton(R.string.radio_open_bluetooth_settings, (dialog, which) -> {
+                    try {
+                        startActivity(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS));
+                    } catch (ActivityNotFoundException e) {
+                        Toast.makeText(this, R.string.radio_bluetooth_off, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(R.string.close, null)
+                .show();
+    }
+
     private void transmitMessage(String message, boolean encrypt) {
+        if (isRadioConnected() && radioLink.isTransmitting()) {
+            Toast.makeText(this, R.string.radio_busy, Toast.LENGTH_SHORT).show();
+            return;
+        }
         if (encrypt && (password == null || password.isEmpty())) {
             Toast.makeText(this, R.string.encryption_disabled_no_password, Toast.LENGTH_LONG).show();
             return;
@@ -1962,12 +2193,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         configureEncoder(mesg, callTerm(), carrierFrequency, noiseSymbols, fancyHeader);
-        for (int i = 0; i < 5; ++i) {
-            produceEncoder(outputBuffer, outputChannel);
-            audioTrack.write(outputBuffer, 0, outputBuffer.length);
+        if (isRadioConnected()) {
+            transmitViaRadio(0);
+        } else {
+            for (int i = 0; i < 5; ++i) {
+                produceEncoder(outputBuffer, outputChannel);
+                audioTrack.write(outputBuffer, 0, outputBuffer.length);
+            }
+            audioTrack.play();
+            setStatus(getString(R.string.transmitting));
         }
-        audioTrack.play();
-        setStatus(getString(R.string.transmitting));
 
         if (wasBeaconRunning) {
             beaconRunnable = new Runnable() {
@@ -2004,6 +2239,10 @@ public class MainActivity extends AppCompatActivity {
         autoSaveContact(sender);
         addMessage(sender, getString(R.string.repeated), new String(payload).trim());
         configureEncoder(payload, stagedCall, carrierFrequency, noiseSymbols, fancyHeader);
+        if (isRadioConnected()) {
+            transmitViaRadio(1000L * repeaterDelay);
+            return;
+        }
         for (int i = 0; i < 5; ++i) {
             produceEncoder(outputBuffer, outputChannel);
             audioTrack.write(outputBuffer, 0, outputBuffer.length);
@@ -2277,12 +2516,14 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        activityResumed = true;
         startListening();
         super.onResume();
     }
 
     @Override
     protected void onPause() {
+        activityResumed = false;
         stopListening();
         storeSettings();
         super.onPause();
@@ -2290,6 +2531,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        if (radioLink != null)
+            radioLink.disconnect();
         stopBeacon();
         if (audioTrack != null) audioTrack.stop();
         destroyEncoder();

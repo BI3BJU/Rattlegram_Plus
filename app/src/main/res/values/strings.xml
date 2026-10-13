@@ -181,4 +181,27 @@ The resulting text message from the COFDMTV decoder is the only data that gets s
 	<string name="contact_limit_reached">Contact limit (100) reached</string>
 	<string name="contact_delete_prompt">Delete this contact?</string>
 	<string name="contact_auto_added_at">Auto-added at </string>
+	<!-- Bluetooth radio -->
+	<string name="bluetooth_radio">Bluetooth Radio</string>
+	<string name="radio_connection">Connect / Disconnect</string>
+	<string name="radio_mute_speaker">Mute radio speaker</string>
+	<string name="radio_connected_muted">Connected to %1$s. Its speaker is muted while connected.</string>
+	<string name="radio_disconnected_muted">%1$s disconnected. If its speaker stays silent, turn its volume knob or reconnect.</string>
+	<string name="radio_choose">Choose your radio</string>
+	<string name="radio_connect">Connect</string>
+	<string name="radio_disconnect">Disconnect</string>
+	<string name="radio_connecting">Connecting to %1$s…</string>
+	<string name="radio_connected_to">Connected to %1$s</string>
+	<string name="radio_connected_tip">Connected to %1$s. Tip: you can turn the radio\'s volume all the way down, decoding still works.</string>
+	<string name="radio_listening">Listening via %1$s</string>
+	<string name="radio_disconnected">%1$s disconnected</string>
+	<string name="radio_connect_failed">Could not connect to %1$s. Make sure it is on, and close other apps using it (such as HTCommander).</string>
+	<string name="radio_pair_new">Pair new radio</string>
+	<string name="radio_pair_title">Pair your radio</string>
+	<string name="radio_pair_help">1. Put the BTECH UV-Pro in pairing mode (see the radio\'s manual). Its light flashes red and green while it is in pairing mode.\n\n2. Open Bluetooth settings on this phone and pair the radio. It shows up as UV-PRO.\n\n3. Come back here and choose Bluetooth Radio again.</string>
+	<string name="radio_open_bluetooth_settings">Open Bluetooth settings</string>
+	<string name="radio_bluetooth_off">Turn on Bluetooth first</string>
+	<string name="radio_permission_denied">Bluetooth permission denied</string>
+	<string name="radio_busy">The radio is still transmitting</string>
+	<string name="radio_disconnect_first">Disconnect the Bluetooth radio first</string>
 </resources>
