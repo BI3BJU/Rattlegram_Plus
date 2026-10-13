@@ -111,6 +111,8 @@ final class RadioLink {
     void configureSpeakerMute(boolean mute, int pendingRestore) {
         this.muteSpeaker = mute;
         this.pendingRestore = pendingRestore;
+        // A new connection starts unmuted by us; anything left over is in pendingRestore.
+        this.savedVolume = -1;
     }
 
     /** Turns speaker muting on or off, applying it right away when connected. */
@@ -260,6 +262,12 @@ final class RadioLink {
             if (!closing)
                 restoreSpeakerNow();
             synchronized (controlLock) {
+                // Restore failed (e.g. the radio was switched off): carry the volume over so the
+                // next connection mutes again and restores it later.
+                if (savedVolume >= 0) {
+                    pendingRestore = savedVolume;
+                    savedVolume = -1;
+                }
                 closeQuietly(control);
                 control = null;
             }
