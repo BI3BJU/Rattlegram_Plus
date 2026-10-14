@@ -1,0 +1,37 @@
+# Git backup directory
+.git.old/
+.git.*/
+
+# Python tools output
+__pycache__/
+*.pyc
+translations_backup*.json
+
+# Temp/log
+*.log
+1.txt
+Windows PowerShell.txt
+
+# Build outputs
+build/
+app/build/
+app/release/
+app/.cxx/
+.gradle/
+.idea/
+local.properties
+*.iml
+
+# Native build
+.cxx/
+obj/
+*.o
+*.so
+
+# Logs / temp
+*.log
+1.txt
+
+# OS
+.DS_Store
+Thumbs.db

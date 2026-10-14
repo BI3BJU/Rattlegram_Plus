@@ -1,0 +1,23 @@
+{
+  "/**\n     * 在当前 EditText 光标处插入位置字符串。\n     */": "/**\n     * Insert a location string at the current cursor position in the EditText.\n     */",
+  "// -1 表示新建": "// -1 means create new",
+  "// ========== 撰写对话框内的位置按钮 ==========": "// ========== Location button inside the compose dialog ==========",
+  "// ========== 统一颜色常量（8 种） ==========": "// ========== Unified color constants (8 kinds) ==========",
+  "// 不使用气泡背景": "// Do not use bubble background",
+  "// 仅匹配收到的 ping（\"Got ping\"），不含自己发送的 ping": "// Only match received ping (\"Got ping\"), excluding self-sent ping",
+  "// 保存按钮": "// Save button",
+  "// 修改": "// Modify",
+  "// 光标移到末尾，便于继续输入": "// Move cursor to the end for easier continued input",
+  "// 删除": "// Delete",
+  "// 接收 ping：橙色": "// Received ping: orange",
+  "// 接收：左对齐": "// Received: left-aligned",
+  "// 新增": "// Add",
+  "// 普通接收：默认颜色": "// Normal received: default color",
+  "// 点击列表项：关闭对话框，打开撰写窗口，自动填充 @[呼号] 空格": "// Click list item: close dialog, open compose window, auto-fill @[call sign] with a space",
+  "// 目标为自身呼号：蓝色": "// Targeting own call sign: blue",
+  "// 联系人列表中当前被长按选中的位置，-1 表示无选中": "// Currently long-pressed selected position in contact list, -1 means no selection",
+  "// 自己发送：右对齐，绿色字体": "// Self-sent: right-aligned, green text",
+  "// 重置选中状态": "// Reset selection state",
+  "// 长按列表项：选中并高亮": "// Long-press list item: select and highlight",
+  "// 长按选中高亮": "// Long-press selection highlight"
+}
