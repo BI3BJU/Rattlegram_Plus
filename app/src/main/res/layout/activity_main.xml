@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="@android:color/white">
+
+    <!-- 标题卡片 -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        android:layout_marginBottom="12dp"
+        app:cardBackgroundColor="@android:color/white"
+        app:strokeColor="#D0D0D0"
+        app:strokeWidth="1dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="10dp"
+            android:text="@string/app_title"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 密钥区域 -->
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        android:layout_marginBottom="12dp"
+        app:cardBackgroundColor="#F8F8F8"
+        app:strokeColor="#D0D0D0"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- 密钥标签 + 输入框 + 生成按钮（同行） -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/password_label"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/keyEditText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:inputType="textPassword"
+                    android:hint="@string/password_hint"
+                    android:padding="10dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="13sp"
+                    android:background="@android:drawable/editbox_background" />
+
+                <!-- 生成密钥按钮：固定宽度 120dp -->
+                <Button
+                    android:id="@+id/generateKeyButton"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generate_key_button"
+                    android:textColor="#000000"
+                    android:textSize="12sp"
+                    style="@style/Widget.Material3.Button"
+                    android:backgroundTint="#90CAF9" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 明文区域 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/plainCard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        android:layout_marginBottom="6dp"
+        app:cardBackgroundColor="#F8F8F8"
+        app:strokeColor="#D0D0D0"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <!-- 第一行：明文标签（左）、输出格式居中、加密按钮（右） -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/plaintext_label"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- 输出格式选项居中容器 -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <RadioGroup
+                        android:id="@+id/formatRadioGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <RadioButton
+                            android:id="@+id/radioBase64"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="@string/base64"
+                            android:textSize="12sp" />
+
+                        <RadioButton
+                            android:id="@+id/radioHex"
+                            android:layout_width="102dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/hex"
+                            android:textSize="12sp" />
+                    </RadioGroup>
+                </LinearLayout>
+
+                <!-- 加密按钮：固定宽度 120dp -->
+                <Button
+                    android:id="@+id/encryptButton"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/encrypt_button"
+                    android:backgroundTint="#E57373"
+                    android:textColor="#1C1C1C"
+                    android:textSize="12sp"
+                    style="@style/Widget.Material3.Button" />
+            </LinearLayout>
+
+            <!-- 明文输入框 -->
+            <EditText
+                android:id="@+id/plainTextEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:hint="@string/plaintext_hint"
+                android:padding="10dp"
+                android:textSize="13sp"
+                android:background="@android:drawable/editbox_background" />
+
+            <!-- 明文统计标签（新增） -->
+            <TextView
+                android:id="@+id/plainStatsTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#666666"
+                android:textSize="11sp"
+                android:paddingTop="4dp"
+                android:paddingStart="4dp"
+                android:text="" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 密文区域 -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cipherCard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        app:cardCornerRadius="4dp"
+        app:cardElevation="0dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="6dp"
+        app:cardBackgroundColor="#F8F8F8"
+        app:strokeColor="#D0D0D0"
+        app:strokeWidth="1dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="6dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/ciphertext_label"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- 解密按钮：固定宽度 120dp -->
+                <Button
+                    android:id="@+id/decryptButton"
+                    android:layout_width="120dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/decrypt_button"
+                    android:backgroundTint="#81C784"
+                    android:textColor="#1C1C1C"
+                    android:textSize="12sp"
+                    style="@style/Widget.Material3.Button" />
+            </LinearLayout>
+
+            <!-- 密文输入框 -->
+            <EditText
+                android:id="@+id/cipherTextEditText"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:hint="@string/ciphertext_hint"
+                android:padding="10dp"
+                android:textSize="13sp"
+                android:background="@android:drawable/editbox_background" />
+
+            <!-- 密文统计标签（新增） -->
+            <TextView
+                android:id="@+id/cipherStatsTextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#666666"
+                android:textSize="11sp"
+                android:paddingTop="4dp"
+                android:paddingStart="4dp"
+                android:text="" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- 底部状态栏 -->
+    <TextView
+        android:id="@+id/statusTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:minHeight="20dp" />
+</LinearLayout>

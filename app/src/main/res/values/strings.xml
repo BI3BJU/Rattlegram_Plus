@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Text Encryption Tool</string>
+    <string name="app_title">Text Encryption Tool (AES-256-GCM / PBKDF2) v1.1 by BI3BJU</string>
+
+    <string name="password_label">Key</string>
+    <string name="password_hint">It is recommended to use a password manager to generate a 32-byte random key (Base64) for maximum security and minimal storage overhead.</string>
+    <string name="key_hint">It is recommended to use a password manager to generate a 32-byte random key (Base64) for maximum security and minimal storage overhead.</string>
+    <string name="generate_key_button">Generate Key</string>
+
+    <string name="plaintext_label">Plaintext</string>
+    <string name="plaintext_hint">Enter text to encrypt</string>
+    <string name="encrypt_button">Encrypt →</string>
+
+    <string name="ciphertext_label">Ciphertext</string>
+    <string name="ciphertext_hint">Encrypted ciphertext will appear here</string>
+    <string name="decrypt_button">← Decrypt</string>
+
+    <string name="output_format_label">Output format:</string>
+    <string name="base64">Base64</string>
+    <string name="hex">Hex</string>
+
+    <!-- 统计字符串 -->
+    <string name="plain_stats">UTF-8 bytes: %d</string>
+    <string name="cipher_stats_base64">Characters (Base64): %d</string>
+    <string name="cipher_stats_hex">Bytes (Hex): %d</string>
+    <string name="cipher_stats_empty">Empty ciphertext</string>
+    <string name="cipher_stats_invalid">Invalid ciphertext</string>
+
+    <!-- 状态消息 -->
+    <string name="status_key_empty">Warning: Key cannot be empty</string>
+    <string name="status_plain_empty">Warning: Plaintext cannot be empty</string>
+    <string name="status_cipher_empty">Warning: Ciphertext cannot be empty</string>
+    <string name="status_encrypt_success">Encryption successful, ciphertext copied to clipboard</string>
+    <string name="status_encrypt_failed">Encryption error: %s</string>
+    <string name="status_decrypt_failed_wrong_key">Decryption failed: wrong key or corrupted data</string>
+    <string name="status_decrypt_failed_general">Decryption failed: unknown error</string>
+    <string name="status_decrypt_success">Decryption successful, plaintext copied to clipboard</string>
+    <string name="status_invalid_format">Error: Invalid ciphertext format (needs at least 44 bytes)</string>
+    <string name="status_key_generated">Random key generated and copied to clipboard</string>
+    <string name="status_copy_failed">Failed to copy to clipboard</string>
+    <string name="status_copied">Copied to clipboard</string>
+    <string name="status_cut">Cut</string>
+    <string name="status_pasted">Pasted from clipboard</string>
+    <string name="status_cleared">Content cleared</string>
+    <string name="status_selected_all">All text selected</string>
+
+    <!-- 上下文菜单 -->
+    <string name="menu_options_title">Options</string>
+    <string name="menu_copy">Copy</string>
+    <string name="menu_paste">Paste</string>
+    <string name="menu_cut">Cut</string>
+    <string name="menu_select_all">Select All</string>
+    <string name="menu_clear">Clear</string>
+    <string name="menu_encrypt_current">Encrypt Current Text</string>
+    <string name="menu_decrypt_current">Decrypt Current Text</string>
+    <string name="menu_generate_key">Generate Random Key</string>
+</resources>

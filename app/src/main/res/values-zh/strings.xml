@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">文本加密工具</string>
+    <string name="app_title">文本加密工具 (AES-256-GCM / PBKDF2) v1.1 作者 BI3BJU</string>
+
+    <string name="password_label">密钥</string>
+    <string name="password_hint">建议使用密码管理器生成 32 字节随机密钥（Base64），以获得最高安全性和最小存储开销。</string>
+    <string name="key_hint">建议使用密码管理器生成 32 字节随机密钥（Base64），以获得最高安全性和最小存储开销。</string>
+    <string name="generate_key_button">生成密钥</string>
+
+    <string name="plaintext_label">明文</string>
+    <string name="plaintext_hint">输入要加密的文本</string>
+    <string name="encrypt_button">加密 →</string>
+
+    <string name="ciphertext_label">密文</string>
+    <string name="ciphertext_hint">加密后的密文将显示在这里</string>
+    <string name="decrypt_button">← 解密</string>
+
+    <string name="output_format_label">输出格式：</string>
+    <string name="base64">Base64</string>
+    <string name="hex">十六进制</string>
+
+    <!-- 统计字符串 -->
+    <string name="plain_stats">UTF-8 字节数：%d</string>
+    <string name="cipher_stats_base64">字符数 (Base64)：%d</string>
+    <string name="cipher_stats_hex">字节数 (十六进制)：%d</string>
+    <string name="cipher_stats_empty">密文为空</string>
+    <string name="cipher_stats_invalid">无效密文格式</string>
+
+    <!-- 状态消息 -->
+    <string name="status_key_empty">警告：密钥不能为空</string>
+    <string name="status_plain_empty">警告：明文不能为空</string>
+    <string name="status_cipher_empty">警告：密文不能为空</string>
+    <string name="status_encrypt_success">加密成功，密文已复制到剪贴板</string>
+    <string name="status_encrypt_failed">加密错误：%s</string>
+    <string name="status_decrypt_failed_wrong_key">解密失败：密钥错误或数据已损坏</string>
+    <string name="status_decrypt_failed_general">解密失败：未知错误</string>
+    <string name="status_decrypt_success">解密成功，明文已复制到剪贴板</string>
+    <string name="status_invalid_format">错误：无效的密文格式（至少需要 44 字节）</string>
+    <string name="status_key_generated">已生成随机密钥并复制到剪贴板</string>
+    <string name="status_copy_failed">复制到剪贴板失败</string>
+    <string name="status_copied">已复制到剪贴板</string>
+    <string name="status_cut">已剪切</string>
+    <string name="status_pasted">已从剪贴板粘贴</string>
+    <string name="status_cleared">内容已清除</string>
+    <string name="status_selected_all">已全选</string>
+
+    <!-- 上下文菜单 -->
+    <string name="menu_options_title">选项菜单</string>
+    <string name="menu_copy">复制</string>
+    <string name="menu_paste">粘贴</string>
+    <string name="menu_cut">剪切</string>
+    <string name="menu_select_all">全选</string>
+    <string name="menu_clear">清空</string>
+    <string name="menu_encrypt_current">加密当前文本</string>
+    <string name="menu_decrypt_current">解密当前文本</string>
+    <string name="menu_generate_key">生成随机密钥</string>
+</resources>
